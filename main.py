@@ -1,67 +1,43 @@
-balance = 100  # Starting balance
+from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
+from InquirerPy.separator import Separator
+import info
+print("--------------welcome------------------")
+choice = inquirer.select(message="what do you want to do",
+                         choices=[
+                             Choice("check_user",name="check git user info"),
+                             Choice("check_repo",name="check repo info"),
+                             Choice("set_user",name="set new user info"),
+                             Choice("save_locall",name="save changes locally"),
+                             Choice("push_remote",name="submit to remote"),]
+                               ).execute()
 
-while True:
-    print("\nUSSD Menu:")
-    print("1. Check Balance")
-    print("2. Buy Data")
-    print("3. Buy Airtime")
-    print("4. Exit")
-    
-    option = input("Enter option: ")
-
-    # -------------------------------
-    # Group 1: Check Balance
-    if option == "1":
-        print(f"your account balance is {balance} birr")    
-       
-
-    # -------------------------------
-    # Group 2: Buy Data
-    elif option == "2":
-        print("Buy package")
-        print("1. main account")
-        print("2. reward account")
-        account_choice = input()
-        if account_choice == "1":
-            print("buy package")
-            print("1. for self")
-            print("2. for others")
-            recepient_choice = input()
-            if recepient_choice == "1":
-                print("buy package")
-                print("1. buy voice package")
-                print("2. internet")
-                package_choice = input()
-                if recepient_choice == "1":
-                    print("1. daily Birr 3 for 15Min+3SMS+15 Min Night bonus")
-                    #TO DO: add all alternatives     
-                    amount_choice = input()
-                    if amount_choice == "1":
-                        print("confirm daily birr3 ...")
-                        print("1. confirm")
-                        print("2. cancel")
-                        confirmation_choice = input()
-                        if confirmation_choice == "1":
-                            print("enter your PIN"):
-                            user_pin = input()
-                            # TO DO: need to cal api
-                            print("your request has been send you will receive sms shortly ...")
-                
-        pass   # <-- Group 2: Insert your code here
-
-    # -------------------------------
-    # Group 3: Buy Airtime
-    elif option == "3":
-        print("Airtime/Package")
-        print("1. buy airtime")
-        print("2. buy package")
-        choice = input()
-        pass   # <-- Group 3: Insert your code here
-
-    # -------------------------------
-    # Group 4: Exit & Invalid Input
-    elif option == "4":
-        pass   # <-- Group 4: Insert your code to handle exit here
-        break
+if choice=="check_user":
+    user = info.has_user()
+    if user:
+        print(f"these computer is set with \n user name: {user[0]} \n email: {user[1]}")
     else:
-        pass   # <-- Group 4: Insert your code to handle invalid input here
+        print("currently the computer is has not been assigned git username and email")
+        set_choice = inquirer.select(message="do you want to set now",
+                                     choices=[
+                                         Choice("yes",name="yes"),
+                                         Choice("no",name="no"),]
+                                     ).execute()
+        if set_choice=="yes":
+            is_git_set = info.set_git_user_config()
+            if is_git_set:
+                print("git user info set successfully")
+            else:
+                print("failed to set git user info")
+elif choice=="set_user":
+    is_git_set = info.set_git_user_config()
+    if is_git_set:
+        print("git user info set successfully")
+    else:
+        print("failed to set git user info")
+elif choice=="check_repo":
+    repo_info = info.check_repo_info()
+    if repo_info:
+        print(f"remote url: {repo_info[0]}\n current branch: {repo_info[1]}")
+    else:
+        print("this directory is not a git repository or git is not installed")
